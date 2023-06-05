@@ -13,7 +13,7 @@ public class BlogContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        optionsBuilder.UseNpgsql(_configuration.GetConnectionString("BlogApi"))
+        optionsBuilder.UseNpgsql(_configuration.GetConnectionString("BlogApi"));
     }
     
     public DbSet<Post> Posts { get; set; }
