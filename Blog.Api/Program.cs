@@ -1,4 +1,6 @@
 using Blog.Api.Data;
+using Blog.Api.Helpers;
+using Blog.Api.Mapping;
 using Blog.Api.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -11,12 +13,13 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<BlogContext>();
+builder.Services.AddTransient<IDateTimeProvider, DateTimeProvider>();
 builder.Services.AddTransient<IPostRepository, PostRepository>();
 
 var app = builder.Build();
 
 AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
-
+PostMapper.Configure(app.Services.GetService<IDateTimeProvider>()!);
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {

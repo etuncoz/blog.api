@@ -35,7 +35,7 @@ public class PostRepository : IPostRepository
 
         existingPost.Title = post.Title;
         existingPost.Description = post.Description;
-        existingPost.UpdatedAt = DateTime.Now;
+        existingPost.UpdatedAt = post.UpdatedAt;
         existingPost.UpdatedBy = -1;
         
         _context.Posts.Update(existingPost);

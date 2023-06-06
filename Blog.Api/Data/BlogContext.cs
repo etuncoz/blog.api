@@ -4,7 +4,7 @@ namespace Blog.Api.Data;
 
 public class BlogContext : DbContext
 {
-    protected readonly IConfiguration _configuration;
+    private readonly IConfiguration _configuration;
 
     public BlogContext(IConfiguration configuration)
     {
