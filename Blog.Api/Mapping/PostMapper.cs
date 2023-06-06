@@ -54,7 +54,8 @@ public static class PostMapper
         {
             UpdatedAt = _dateTimeProvider!.DateTimeNow(),
             Description = source.Description,
-            Title = source.Title
+            Title = source.Title,
+            UpdatedBy = -1
         };
         return destination;
     }
@@ -68,7 +69,9 @@ public static class PostMapper
             CreatedAt = _dateTimeProvider!.DateTimeNow(),
             UpdatedAt = _dateTimeProvider!.DateTimeNow(),
             Description = source.Description,
-            Title = source.Title
+            Title = source.Title,
+            CreatedBy = -1,
+            UpdatedBy = -1
         };
         return destination;
     }
