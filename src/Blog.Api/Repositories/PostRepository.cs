@@ -12,10 +12,12 @@ public class PostRepository : IPostRepository
         _context = context;
     }
     
-    public async Task AddPostAsync(Post post)
+    public async Task<Post> CreatePostAsync(Post post)
     {
         await _context.Posts.AddAsync(post);
         await _context.SaveChangesAsync();
+
+        return post;
     }
     
     public async Task<Post?> GetPostByIdAsync(int id)
@@ -28,10 +30,10 @@ public class PostRepository : IPostRepository
         return await _context.Posts.ToArrayAsync();
     }
 
-    public async Task UpdatePostAsync(int id, Post post)
+    public async Task<Post?> UpdatePostAsync(int id, Post post)
     {
         var existingPost = await this.GetPostByIdAsync(id);
-        if (existingPost is null) return;
+        if (existingPost is null) return null;
 
         existingPost.Title = post.Title;
         existingPost.Description = post.Description;
@@ -40,5 +42,7 @@ public class PostRepository : IPostRepository
         
         _context.Posts.Update(existingPost);
         await _context.SaveChangesAsync();
+
+        return existingPost;
     }
 }

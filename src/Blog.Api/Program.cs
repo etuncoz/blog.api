@@ -1,3 +1,4 @@
+using System.Reflection;
 using Blog.Api.Data;
 using Blog.Api.Helpers;
 using Blog.Api.Mapping;
@@ -13,6 +14,10 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<BlogContext>();
+builder.Services.AddMediatR(configuration =>
+{
+    configuration.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly());
+});
 builder.Services.AddTransient<IDateTimeProvider, DateTimeProvider>();
 builder.Services.AddTransient<IPostRepository, PostRepository>();
 
