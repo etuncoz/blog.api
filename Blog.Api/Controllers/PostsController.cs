@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Mvc;
 namespace Blog.Api.Controllers;
 
 [ApiController]
-[Route("api/v1/posts")]
 public class PostsController : ControllerBase
 {
     private readonly IPostRepository _postRepository;
@@ -17,30 +16,30 @@ public class PostsController : ControllerBase
         _postRepository = postRepository;
     }
 
-    [HttpGet("")]
+    [HttpGet(ApiEndpoints.V1.Posts.GetAll)]
     public async Task<IActionResult> GetAll()
     {
         var posts = await _postRepository.GetPostsAsync();
 
-        var postModels = posts.Select(p => p.ToModel());
+        var postModels = posts.Select(p => p.MapToModel());
         
         return Ok(postModels);
     }
     
-    [HttpGet("{id:int}")]
+    [HttpGet(ApiEndpoints.V1.Posts.Get)]
     public async Task<IActionResult> Get([FromRoute]int id)
     {
         var post = await _postRepository.GetPostByIdAsync(id);
         
-        var postModel = post.ToModel();
+        var postModel = post.MapToModel();
         
         return Ok(postModel);
     }
     
-    [HttpPut("{id:int}")]
+    [HttpPut(ApiEndpoints.V1.Posts.Update)]
     public async Task<IActionResult> Update([FromRoute]int id, [FromBody]UpdatePostRequest request)
     {
-        var post = request.ToDomain();
+        var post = request.MapToDomain();
 
         if (post is null)
             return BadRequest();
@@ -49,10 +48,10 @@ public class PostsController : ControllerBase
         return Ok();
     }
     
-    [HttpPost("")]
+    [HttpPost(ApiEndpoints.V1.Posts.Create)]
     public async Task<IActionResult> Create([FromBody]CreatePostRequest request)
     {
-        var post = request.ToDomain();
+        var post = request.MapToDomain();
 
         if (post is null)
             return BadRequest();

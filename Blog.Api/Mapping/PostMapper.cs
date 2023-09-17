@@ -1,4 +1,3 @@
-using System.Runtime.CompilerServices;
 using Blog.Api.Data;
 using Blog.Api.Helpers;
 using Blog.Api.Models.Posts;
@@ -14,7 +13,7 @@ public static class PostMapper
         _dateTimeProvider = dateTimeProvider ?? throw new ArgumentNullException(nameof(dateTimeProvider));
     }
     
-    public static PostModel? ToModel(this Post? source)
+    public static PostModel? MapToModel(this Post? source)
     {
         if (source is null) return null;
         
@@ -30,7 +29,8 @@ public static class PostMapper
         return destination;
     }
     
-    public static Post? ToDomain(this PostModel? source)
+    
+    public static Post? MapToDomain(this PostModel? source)
     {
         if (source is null) return null;
         
@@ -46,7 +46,7 @@ public static class PostMapper
         return destination;
     }
     
-    public static Post? ToDomain(this UpdatePostRequest? source)
+    public static Post? MapToDomain(this UpdatePostRequest? source)
     {
         if (source is null) return null;
         
@@ -60,7 +60,7 @@ public static class PostMapper
         return destination;
     }
     
-    public static Post? ToDomain(this CreatePostRequest? source)
+    public static Post? MapToDomain(this CreatePostRequest? source)
     {
         if (source is null) return null;
         

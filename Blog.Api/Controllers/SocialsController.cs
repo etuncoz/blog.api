@@ -4,10 +4,9 @@ using Microsoft.AspNetCore.Mvc;
 namespace Blog.Api.Controllers;
 
 [ApiController]
-[Route("api/v1")]
 public class SocialsController : ControllerBase
 {
-    [HttpGet("socials")]
+    [HttpGet(ApiEndpoints.V1.Socials.GetAll)]
     public async Task<IActionResult> GetAll()
     {
         var socials = new List<SocialModel>()
