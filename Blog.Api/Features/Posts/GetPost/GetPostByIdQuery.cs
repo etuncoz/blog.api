@@ -1,6 +1,6 @@
-namespace Blog.Api.Queries;
+using Blog.Api.Data;
+using MediatR;
 
-public class GetPostByIdQuery
-{
-    
-}
+namespace Blog.Api.Features.Posts.GetPost;
+
+public record GetPostByIdQuery(Guid Id) : IRequest<Post?>;

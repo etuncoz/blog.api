@@ -1,8 +1,11 @@
+using Blog.Api;
 using Blog.Api.Data;
 using Blog.Api.Helpers;
 using Blog.Api.Mapping;
 using Blog.Api.Repositories;
+using FluentValidation;
 using Serilog;
+using Serilog.Formatting;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,8 +20,12 @@ builder.Services.AddDbContext<BlogContext>();
 builder.Services.AddTransient<IDateTimeProvider, DateTimeProvider>();
 builder.Services.AddTransient<IPostRepository, PostRepository>();
 
-builder.Host.UseSerilog((context, configuration) => 
-    configuration.ReadFrom.Configuration(context.Configuration));
+builder.Services.AddValidatorsFromAssemblyContaining<IAssemblyMarker>(ServiceLifetime.Singleton);
+
+// builder.Host.UseSerilog((context, configuration) => 
+//     configuration.ReadFrom.Configuration(context.Configuration));
+
+builder.Services.AddMediatR((config) => config.RegisterServicesFromAssemblyContaining<IAssemblyMarker>());
 
 var app = builder.Build();
 
@@ -35,6 +42,8 @@ app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
+
+app.UseMiddleware<ValidationMappingMiddleware>();
 app.MapControllers();
 
 app.Run();

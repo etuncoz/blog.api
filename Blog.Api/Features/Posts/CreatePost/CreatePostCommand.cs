@@ -1,6 +1,5 @@
-namespace Blog.Api.Commands;
+using MediatR;
 
-public class CreatePostCommand
-{
-    
-}
+namespace Blog.Api.Features.Posts.CreatePost;
+
+public record CreatePostCommand(string Title, string Description) : IRequest<Guid>;

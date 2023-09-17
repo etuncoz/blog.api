@@ -18,7 +18,7 @@ public class PostRepository : IPostRepository
         await _context.SaveChangesAsync();
     }
     
-    public async Task<Post?> GetPostByIdAsync(int id)
+    public async Task<Post?> GetPostByIdAsync(Guid id)
     {
         return await _context.Posts.FirstOrDefaultAsync(p => p.Id == id);
     }
@@ -28,17 +28,19 @@ public class PostRepository : IPostRepository
         return await _context.Posts.ToArrayAsync();
     }
 
-    public async Task UpdatePostAsync(int id, Post post)
+    public async Task<bool> UpdatePostAsync(Guid id, Post post)
     {
         var existingPost = await this.GetPostByIdAsync(id);
-        if (existingPost is null) return;
+        if (existingPost is null) return false;
 
         existingPost.Title = post.Title;
         existingPost.Description = post.Description;
         existingPost.UpdatedAt = post.UpdatedAt;
-        existingPost.UpdatedBy = -1;
+        existingPost.UpdatedBy = Guid.Empty;
         
         _context.Posts.Update(existingPost);
         await _context.SaveChangesAsync();
+
+        return true;
     }
 }

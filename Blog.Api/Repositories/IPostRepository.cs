@@ -5,7 +5,7 @@ namespace Blog.Api.Repositories;
 public interface IPostRepository
 {
     Task AddPostAsync(Post post);
-    Task<Post?> GetPostByIdAsync(int id);
+    Task<Post?> GetPostByIdAsync(Guid id);
     Task<Post[]> GetPostsAsync();
-    Task UpdatePostAsync(int id, Post post);
+    Task<bool> UpdatePostAsync(Guid id, Post post);
 }

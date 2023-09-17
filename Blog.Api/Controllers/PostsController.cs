@@ -1,7 +1,11 @@
 using Blog.Api.Data;
+using Blog.Api.Features.Posts.CreatePost;
+using Blog.Api.Features.Posts.GetPost;
+using Blog.Api.Features.Posts.GetPosts;
+using Blog.Api.Features.Posts.UpdatePost;
 using Blog.Api.Mapping;
 using Blog.Api.Models.Posts;
-using Blog.Api.Repositories;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Blog.Api.Controllers;
@@ -9,54 +13,52 @@ namespace Blog.Api.Controllers;
 [ApiController]
 public class PostsController : ControllerBase
 {
-    private readonly IPostRepository _postRepository;
+    private readonly IMediator _mediator;
 
-    public PostsController(IPostRepository postRepository)
+    public PostsController(IMediator mediator)
     {
-        _postRepository = postRepository;
+        _mediator = mediator;
     }
 
     [HttpGet(ApiEndpoints.V1.Posts.GetAll)]
     public async Task<IActionResult> GetAll()
     {
-        var posts = await _postRepository.GetPostsAsync();
+        var query = new GetAllPostsQuery();
+        var results = await _mediator.Send(query);
 
-        var postModels = posts.Select(p => p.MapToModel());
+        var postModels = results.Select(p => p.MapToModel());
         
         return Ok(postModels);
     }
     
     [HttpGet(ApiEndpoints.V1.Posts.Get)]
-    public async Task<IActionResult> Get([FromRoute]int id)
+    public async Task<IActionResult> Get([FromRoute]Guid id)
     {
-        var post = await _postRepository.GetPostByIdAsync(id);
+        var query = new GetPostByIdQuery(id);
+        var result = await _mediator.Send(query);
         
-        var postModel = post.MapToModel();
-        
-        return Ok(postModel);
+        var postModel = result.MapToModel();
+
+        return postModel is null ? NotFound() : Ok(postModel);
     }
     
     [HttpPut(ApiEndpoints.V1.Posts.Update)]
-    public async Task<IActionResult> Update([FromRoute]int id, [FromBody]UpdatePostRequest request)
+    public async Task<IActionResult> Update([FromRoute]Guid id, [FromBody]UpdatePostRequest request)
     {
-        var post = request.MapToDomain();
+        var command = new UpdatePostCommand(id, request.Title, request.Description);
 
-        if (post is null)
-            return BadRequest();
+        await _mediator.Send(command);
         
-        await _postRepository.UpdatePostAsync(id, post);
         return Ok();
     }
     
     [HttpPost(ApiEndpoints.V1.Posts.Create)]
     public async Task<IActionResult> Create([FromBody]CreatePostRequest request)
     {
-        var post = request.MapToDomain();
+        var command = new CreatePostCommand(request.Title, request.Description);
 
-        if (post is null)
-            return BadRequest();
+        var result = await _mediator.Send(command); 
         
-        await _postRepository.AddPostAsync(post);
-        return Ok();
+        return CreatedAtAction(nameof(Get), new {id = result});
     }
 }

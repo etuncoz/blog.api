@@ -1,6 +1,6 @@
-namespace Blog.Api.Queries;
+using Blog.Api.Data;
+using MediatR;
 
-public class GetAllPostsQuery
-{
-    
-}
+namespace Blog.Api.Features.Posts.GetPosts;
+
+public record GetAllPostsQuery() : IRequest<IEnumerable<Post>>;
