@@ -6,6 +6,7 @@ using Blog.Application.Posts.CreatePost;
 using Blog.Application.Posts.GetPost;
 using Blog.Application.Posts.GetPosts;
 using Blog.Application.Posts.UpdatePost;
+using Blog.Domain.Posts;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -68,6 +69,12 @@ public class PostsController : BaseApiController
 
         var result = await _mediator.Send(command); 
         
-        return CreatedAtAction(nameof(Get), new {id = result});
+        return result.Match<IActionResult>(
+            post => CreatedAtAction(
+                nameof(Get), 
+                new {id = post.Id},
+                post.MapToModel()),
+            failed => BadRequest(failed.Errors)
+        );
     }
 }

@@ -10,7 +10,8 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddInfrastructure(this IServiceCollection services)
     {
-        services.AddDbContext<BlogContext>();
+        services.AddDbContext<BlogContext>(options =>
+            options.UseNpgsql("User ID=postgres;Password=s@password;Server=localhost;Port=5432;Database=Blog;Integrated Security=true;Pooling=true;"));
 
         services.AddScoped<IPostRepository, PostRepository>();
         

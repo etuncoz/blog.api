@@ -1,9 +1,7 @@
 using Blog.Api.Auth;
-using Blog.Api.Helpers;
 using Blog.Api.Mapping;
 using Blog.Application;
 using Blog.Infrastructure;
-using Blog.Infrastructure.Common.Persistence;
 using InfrastructureDependencyInjection = Blog.Infrastructure.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -25,8 +23,6 @@ app.UseExceptionHandler();
 
 using var scope = app.Services.CreateScope();
 await InfrastructureDependencyInjection.InitializeDatabaseAsync(scope.ServiceProvider);
-
-PostMapper.Configure(app.Services.GetService<IDateTimeProvider>()!);
 
 
 if (app.Environment.IsDevelopment())

@@ -30,17 +30,9 @@ public class PostRepository : IPostRepository
         return await _context.Posts.ToArrayAsync();
     }
 
-    public async Task<bool> UpdatePostAsync(Guid id, Post post)
+    public async Task<bool> UpdatePostAsync(Post post)
     {
-        var existingPost = await this.GetPostByIdAsync(id);
-        if (existingPost is null) return false;
-
-        existingPost.Title = post.Title;
-        existingPost.Description = post.Description;
-        existingPost.UpdatedAt = post.UpdatedAt;
-        existingPost.UpdatedBy = Guid.Empty;
-        
-        _context.Posts.Update(existingPost);
+        _context.Posts.Update(post);
         await _context.SaveChangesAsync();
 
         return true;

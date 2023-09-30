@@ -1,11 +1,13 @@
 using Blog.Application.Common.Interfaces;
+using Blog.Application.Common.Validation;
 using Blog.Domain.Posts;
 using FluentValidation;
 using MediatR;
+using OneOf;
 
 namespace Blog.Application.Posts.CreatePost;
 
-public class CreatePostHandler : IRequestHandler<CreatePostCommand, Guid>
+public class CreatePostHandler : IRequestHandler<CreatePostCommand, OneOf<Post, ValidationFailed>>
 {
     private readonly IPostRepository _postRepository;
     private readonly IValidator<CreatePostCommand> _validator;
@@ -16,23 +18,19 @@ public class CreatePostHandler : IRequestHandler<CreatePostCommand, Guid>
         _validator = validator;
     }
 
-    public async Task<Guid> Handle(CreatePostCommand request, CancellationToken cancellationToken)
+    public async Task<OneOf<Post, ValidationFailed>> Handle(CreatePostCommand request, CancellationToken cancellationToken)
     {
-        await _validator.ValidateAndThrowAsync(request, cancellationToken);
-        
-        var post = new Post
+        var validationResult = await _validator.ValidateAsync(request, cancellationToken);
+
+        if (!validationResult.IsValid)
         {
-            Id = new Guid(),
-            Title = request.Title,
-            Description = request.Description,
-            CreatedAt = DateTime.Now,
-            UpdatedAt = DateTime.Now,
-            CreatedBy = Guid.Empty,
-            UpdatedBy = Guid.Empty
-        };
+            return new ValidationFailed(validationResult.Errors);
+        }
+
+        var post = new Post(request.Title, request.Description);
 
         await _postRepository.AddPostAsync(post);
 
-        return post.Id!;
+        return post;
     }
 }
