@@ -1,31 +1,34 @@
-using System.Reflection;
-using Blog.Api.Data;
+using Blog.Api.Auth;
 using Blog.Api.Helpers;
 using Blog.Api.Mapping;
-using Blog.Api.Repositories;
+using Blog.Application;
+using Blog.Infrastructure;
+using Blog.Infrastructure.Common.Persistence;
+using InfrastructureDependencyInjection = Blog.Infrastructure.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddProblemDetails();
 
-builder.Services.AddDbContext<BlogContext>();
-builder.Services.AddMediatR(configuration =>
-{
-    configuration.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly());
-});
-builder.Services.AddTransient<IDateTimeProvider, DateTimeProvider>();
-builder.Services.AddTransient<IPostRepository, PostRepository>();
+builder.Services
+    .AddInfrastructure()
+    .AddApplication();
+
+builder.Services.AddScoped<ApiKeyAuthFilter>();
 
 var app = builder.Build();
 
-AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+app.UseExceptionHandler();
+
+using var scope = app.Services.CreateScope();
+await InfrastructureDependencyInjection.InitializeDatabaseAsync(scope.ServiceProvider);
+
 PostMapper.Configure(app.Services.GetService<IDateTimeProvider>()!);
-// Configure the HTTP request pipeline.
+
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -36,6 +39,8 @@ app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
+
+app.UseMiddleware<ValidationMappingMiddleware>();
 app.MapControllers();
 
 app.Run();

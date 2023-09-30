@@ -1,20 +1,19 @@
-using Blog.Api.Models.Socials;
+using Blog.Api.Contracts.Responses.V1.Social;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Blog.Api.Controllers;
 
 [ApiController]
-[Route("api/v1")]
 public class SocialsController : ControllerBase
 {
-    [HttpGet("socials")]
+    [HttpGet(ApiEndpoints.V1.Socials.GetAll)]
     public async Task<IActionResult> GetAll()
     {
-        var socials = new List<SocialModel>()
+        var socials = new List<SocialResponse>()
         {
-            new(Guid.Empty, "GitHub", "https://github.com/etuncoz"),
-            new(Guid.Empty, "Twitter", "https://twitter.com/etuncoz"),
-            new(Guid.Empty, "Instagram", "https://instagram.com/etuncoz"),
+            new SocialResponse {Id = Guid.Empty, Name = "GitHub", Url = "https://github.com/etuncoz"},
+            new SocialResponse {Id = Guid.Empty, Name = "Twitter", Url = "https://twitter.com/etuncoz"},
+            new SocialResponse {Id = Guid.Empty, Name = "Instagram", Url = "https://instagram.com/etuncoz"}
         };
 
         return Ok(await Task.FromResult(socials));

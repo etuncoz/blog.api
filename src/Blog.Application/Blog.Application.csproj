@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net7.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <Folder Include="Auth\" />
+      <Folder Include="Posts\" />
+      <Folder Include="Socials\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="ErrorOr" Version="1.2.1" />
+      <PackageReference Include="FluentValidation" Version="11.7.1" />
+      <PackageReference Include="MediatR" Version="12.1.1" />
+      <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.0-rc.1.23419.4" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Blog.Domain\Blog.Domain.csproj" />
+    </ItemGroup>
+
+</Project>
