@@ -29,7 +29,7 @@ public class PostsController : BaseApiController
         var query = new GetAllPostsQuery();
         var results = await _mediator.Send(query);
 
-        var postModels = results.Select(p => p.MapToModel());
+        var postModels = results.Select(p => p.MapToResponse());
         
         return Ok(postModels);
     }
@@ -42,7 +42,7 @@ public class PostsController : BaseApiController
         var query = new GetPostByIdQuery(id);
         var result = await _mediator.Send(query);
         
-        var postModel = result.MapToModel();
+        var postModel = result.MapToResponse();
 
         return postModel is null ? NotFound() : Ok(postModel);
     }
@@ -73,8 +73,8 @@ public class PostsController : BaseApiController
             post => CreatedAtAction(
                 nameof(Get), 
                 new {id = post.Id},
-                post.MapToModel()),
-            failed => BadRequest(failed.Errors)
+                post.MapToResponse()),
+            failure=> BadRequest(failure.MapToResponse())
         );
     }
 }

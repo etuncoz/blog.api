@@ -11,11 +11,13 @@ public class CreatePostHandler : IRequestHandler<CreatePostCommand, OneOf<Post, 
 {
     private readonly IPostRepository _postRepository;
     private readonly IValidator<CreatePostCommand> _validator;
+    private readonly IUnitOfWork _unitOfWork;
 
-    public CreatePostHandler(IPostRepository postRepository, IValidator<CreatePostCommand> validator)
+    public CreatePostHandler(IPostRepository postRepository, IValidator<CreatePostCommand> validator, IUnitOfWork unitOfWork)
     {
         _postRepository = postRepository;
         _validator = validator;
+        _unitOfWork = unitOfWork;
     }
 
     public async Task<OneOf<Post, ValidationFailed>> Handle(CreatePostCommand request, CancellationToken cancellationToken)
@@ -27,10 +29,11 @@ public class CreatePostHandler : IRequestHandler<CreatePostCommand, OneOf<Post, 
             return new ValidationFailed(validationResult.Errors);
         }
 
-        var post = new Post(request.Title, request.Description);
+        var post = Post.Create(request.Title, request.Description);
 
         await _postRepository.AddPostAsync(post);
-
+        await _unitOfWork.CommitChangesAsync();
+        
         return post;
     }
 }

@@ -7,6 +7,8 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <Folder Include="Comments\GetComments\" />
+      <Folder Include="Comments\UpdateComment\" />
       <Folder Include="Posts\" />
       <Folder Include="Socials\" />
     </ItemGroup>

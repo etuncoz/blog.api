@@ -5,7 +5,7 @@ namespace Blog.Api.Mapping;
 
 public static class PostMapper
 {
-    public static PostResponse? MapToModel(this Post? source)
+    public static PostResponse? MapToResponse(this Post? source)
     {
         if (source is null) return null;
         

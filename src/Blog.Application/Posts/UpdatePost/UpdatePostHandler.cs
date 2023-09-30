@@ -9,10 +9,12 @@ namespace Blog.Application.Posts.UpdatePost;
 public class UpdatePostHandler : IRequestHandler<UpdatePostCommand, OneOf<Post, NotFound>>
 {
     private readonly IPostRepository _postRepository;
+    private readonly IUnitOfWork _unitOfWork;
 
-    public UpdatePostHandler(IPostRepository postRepository)
+    public UpdatePostHandler(IPostRepository postRepository, IUnitOfWork unitOfWork)
     {
         _postRepository = postRepository;
+        _unitOfWork = unitOfWork;
     }
 
     public async Task<OneOf<Post, NotFound>> Handle(UpdatePostCommand request, CancellationToken cancellationToken)
@@ -28,7 +30,8 @@ public class UpdatePostHandler : IRequestHandler<UpdatePostCommand, OneOf<Post, 
         existingPost.SetDescription(request.Description);
 
         await _postRepository.UpdatePostAsync(existingPost);
-
+        await _unitOfWork.CommitChangesAsync();
+        
         return existingPost;
     }
 }

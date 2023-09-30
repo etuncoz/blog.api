@@ -14,6 +14,7 @@ public static class DependencyInjection
             options.UseNpgsql("User ID=postgres;Password=s@password;Server=localhost;Port=5432;Database=Blog;Integrated Security=true;Pooling=true;"));
 
         services.AddScoped<IPostRepository, PostRepository>();
+        services.AddScoped<IUnitOfWork>(serviceProvider => serviceProvider.GetRequiredService<BlogContext>());
         
         AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 

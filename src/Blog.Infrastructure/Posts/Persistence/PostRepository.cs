@@ -17,7 +17,6 @@ public class PostRepository : IPostRepository
     public async Task AddPostAsync(Post post)
     {
         await _context.Posts.AddAsync(post);
-        await _context.SaveChangesAsync();
     }
     
     public async Task<Post?> GetPostByIdAsync(Guid id)
@@ -30,11 +29,10 @@ public class PostRepository : IPostRepository
         return await _context.Posts.ToArrayAsync();
     }
 
-    public async Task<bool> UpdatePostAsync(Post post)
+    public Task UpdatePostAsync(Post post)
     {
         _context.Posts.Update(post);
-        await _context.SaveChangesAsync();
 
-        return true;
+        return Task.CompletedTask;
     }
 }
